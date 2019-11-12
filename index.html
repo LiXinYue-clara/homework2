@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Map exercise</title>
+    <link rel = "stylesheet" href = "first.css"> 
+</head>
+<body>
+    <!--HTML-->
+    <!--地图容器div:id = container-->
+    <div id = "container"></div>
+
+    <!--背景-->
+    <div class = "web_bg" style = "background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573309123642&di=74d04e02cde46fa26b0a9b61daa61a8b&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201708%2F29%2F20170829142959_QHLXu.thumb.700_0.jpeg)">
+    </div>
+    <!--列表-->
+    <div class = "header">
+        <h1>AMap Application</h1>
+    </div>
+    
+    <div class = "table">
+        <!--real-time weather-->
+        <div>
+            <h2>real-time weather</h2>
+            <p>click the bulue button in the map.</p>
+        </div>
+        <hr>
+        <!--添加图层-->
+        <div>
+            <h2>add layers</h2>
+            <p>click the following button to add the layer you want.</p>
+            <ul>
+                <li><button id = "add-satellite-layer">add satellite layer</button></li> <!--add卫星图层-->
+                <br>
+                <li><button id = "add-roadnet-layer">add roadnet layer</button></li> <!--add路网图层-->
+                <br>
+                <li><button id = "add-traffic-layer">add traffic layer</button></li> <!--add实时交通图层-->
+            </ul>
+        </div>
+        <hr>
+        <!--删除图层-->
+        <div>
+            <h2>remove layers</h2>
+            <p>click the following button to remove the layer you want.</p>
+            <ul>
+                <li><button id = "remove-satellite-layer">remove satellite layer</button></li> <!--remove卫星图层-->
+                <br>
+                <li><button id = "remove-roadnet-layer">remove roadnet layer</button></li> <!--remove路网图层-->
+                <br>
+                <li><button id = "remove-traffic-layer">remove traffic layer</button></li> <!--remove实时交通图层-->
+            </ul>
+        </div>
+        <hr>
+        <!--marker（点标记）的控制-->
+        <div>
+            <h2>look for</h2>
+            <p>click the palce where you want to know the place of it and you can click the icon to get more information</p>
+            <ul>
+                <li><button id = "JNU">JINAN UNIVERSITY</button></li>
+                <br>
+                <li><button id = "High">High School</button></li>
+            </ul>
+        </div>
+        <hr>
+        <!--移除点标记-->
+        <div>
+            <h2>give up to check</h2>
+            <p>click the palce where you do not want to check anymore</p>
+            <ul>
+                <li><button id = "not-JNU">JINAN UNIVERSITY</button></li>
+                <br>
+                <li><button id = "not-High">High School</button></li>
+            </ul>
+        </div>
+    </div>   
+
+    <!--javascript-->
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=087073a94cd66951e3383c20ebf6c04f&plugin=AMap.Weather, AMap.ToolBar"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script>
+        //引入并导出地图——底层
+        //AMap: 高德地图的构造函数
+        //.Map: 创建地图
+        var map = new AMap.Map('container', {
+            zoom:4,//级别
+            center: [104.07, 30.67],//中心点坐标
+            viewMode:'3D'//使用3D视图
+        });
+
+        //图层
+        //创建图层实例——卫星图层、路网图层
+        var satelliteLayer = new AMap.TileLayer.Satellite();
+        var roadnetLayer = new AMap.TileLayer.RoadNet();
+        var trafficLayer = new AMap.TileLayer.Traffic({
+            'autoRefresh': true,     //自动刷新
+	        'interval': 180,         //刷新间隔: 180s
+        })
+        //添加图层
+        document.querySelector("#add-satellite-layer").onclick = function() {
+            map.add(satelliteLayer);
+        }
+
+        document.querySelector("#add-roadnet-layer").onclick = function() {
+            map.add(roadnetLayer);
+        }
+
+        document.querySelector("#add-traffic-layer").onclick = function() {
+            map.add(trafficLayer);
+        }
+        //移除图层
+        document.querySelector("#remove-satellite-layer").onclick = function() {
+            map.remove(satelliteLayer);
+        }
+
+        document.querySelector("#remove-roadnet-layer").onclick = function() {
+            map.remove(roadnetLayer);
+        }
+
+        document.querySelector("#remove-traffic-layer").onclick = function() {
+            map.remove(trafficLayer);
+        }
+
+        //添加marker
+        //创建点标记——id = JNU
+        var JNU = new AMap.Marker({
+            icon: new AMap.Icon({
+                image: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573387915810&di=f61751b50b14738e10aa7b666c1ff8da&imgtype=0&src=http%3A%2F%2Fwww.peccn.com%2Fuploadfiles%2F%25E6%259A%25A8%25E5%258D%2597%25E5%25A4%25A7%25E5%25AD%25A6.jpeg",
+                size: new AMap.Size(80, 80), 
+                imageSize: new AMap.Size(40,40)
+            }),
+            position: new AMap.LngLat(113.348478,23.130324)   
+        })
+        //添加点标记
+        document.querySelector("#JNU").onclick = function() {
+            map.add(JNU);
+            map.setFitView();
+            AMap.event.addListener(JNU, 'click', function () {
+                infoWindow.open(map, JNU.getPosition());
+            });
+            AMap.event.addListener(JNU,'click',function(){
+                infoWindow.close(map,JNU.getPosition());
+            });
+            var infoWindow = new AMap.InfoWindow({
+                isCustom: true,
+                content: '<div><button><a href ="https://baike.baidu.com/item/暨南大学/154250?fr=aladdin">information of my university</a></button><hr>' + 
+                    '<iframe src = "https://baike.baidu.com/item/暨南大学/154250?fr=aladdin"></iframe></div>',
+                offset: new AMap.Pixel(16, -45)
+            });
+        }
+        //移除点标记
+        document.querySelector("#not-JNU").onclick = function() {
+            map.remove(JNU);
+            map.remove(infoWindow);
+        }
+
+        //创建点标记——id = High
+        var High = new AMap.Marker({
+            icon: new AMap.Icon({
+                image: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573986149&di=dfe54fb487b7e12dde14460d95aa1b26&imgtype=jpg&er=1&src=http%3A%2F%2Fhiphotos.baidu.com%2Fmap%2Fpic%2Fitem%2F0824ab18972bd4071c4854207d899e510eb3095b.jpg",
+                size: new AMap.Size(80, 80), 
+                imageSize: new AMap.Size(40,40)
+            }),
+            position: new AMap.LngLat(103.881496,30.801119)   
+        })
+        //添加点标记
+        document.querySelector("#High").onclick = function() {
+            map.add(High);
+            map.setFitView();
+            AMap.event.addListener(High, 'click', function () {
+                infoWindow.open(map, High.getPosition());
+            });
+            AMap.event.addListener(High,'click',function(){
+                infoWindow.close(map,High.getPosition());
+            });
+            var infoWindow = new AMap.InfoWindow({
+                isCustom: true,
+                content: '<div><button><a href = "https://baike.baidu.com/item/四川省郫县第一中学/18863605?fr=aladdin">information of my high school</a></button><hr>'+
+                    '<iframe src = "https://baike.baidu.com/item/四川省郫县第一中学/18863605?fr=aladdin"></iframe></div>',
+                offset: new AMap.Pixel(16, -45)
+            });
+        }
+        //移除点标记
+        document.querySelector("#not-High").onclick = function() {
+            map.remove(High);
+        }
+        
+
+        //实时天气查询——成都，广州
+        //天气插件的引入
+        AMap.plugin('AMap.Weather', function(){
+            var weather = new AMap.Weather();
+            //显示实时天气信息：成都市
+            weather.getLive('成都市', function(err, data){
+                if(!err) {
+                    //建立天气信息
+                    var str = [];
+                    str.push('<h4>real-time weather' + '</h4><hr>');
+                    str.push('<p>province: ' + data.province + '</p>');
+                    str.push('<p>city: ' + data.city + '</p>');
+                    str.push('<p>temperature: ' + data.temperature + '</p>');
+                    str.push('<p>wind direction: ' + data.windDirection + '</p>');
+                    str.push('<p>wind power: ' + data.windPower + '</p>');
+                    str.push('<p>humidity: ' + data.himudity + '<p>');
+                    str.push('<p>report time: ' + data.reportTime + '</p>');
+                    //创建标记点
+                    var marker = new AMap.Marker({
+                        map: map, 
+                        position: new AMap.LngLat(104.07,30.67)
+                        //new Amap.LngLat(104.07, 30.67)
+                    });
+                    //创建窗口
+                    var infoWin = new AMap.InfoWindow({
+                        content: '<div class = "content">' + str.join('') + '</div><div = class = "sharp"></div>',
+                        isCustom: true,
+                        offset: new AMap.Pixel(0, -37),
+                    });
+                    //点击打开窗口
+                    AMap.event.addListener(marker,'click',function(){
+                        infoWin.open(map,marker.getPosition());
+                    });
+                    //点击关闭窗口
+                    AMap.event.addListener(marker,'click',function(){
+                        infoWin.close(map,marker.getPosition());
+                    });
+                }
+            });
+
+            //显示实时天气信息：广州市
+            weather.getLive('广州市', function(err, data){
+                if(!err) {
+                    //建立天气信息
+                    var str = [];
+                    str.push('<h4>real-time weather' + '</h4><hr>');
+                    str.push('<p>province: ' + data.province + '</p>');
+                    str.push('<p>city: ' + data.city + '</p>');
+                    str.push('<p>temperature: ' + data.temperature + '</p>');
+                    str.push('<p>wind direction: ' + data.windDirection + '</p>');
+                    str.push('<p>wind power: ' + data.windPower + '</p>');
+                    str.push('<p>humidity: ' + data.himudity + '<p>');
+                    str.push('<p>report time: ' + data.reportTime + '</p>');
+                    //创建标记点
+                    var marker = new AMap.Marker({
+                        map: map, 
+                        position: new AMap.LngLat(113.27, 23.13)
+                        //new Amap.LngLat(104.07, 30.67)
+                    });
+                    //创建窗口
+                    var infoWin = new AMap.InfoWindow({
+                        content: '<div class = "content">' + str.join('') + '</div><div = class = "sharp"></div>',
+                        isCustom: true,
+                        offset: new AMap.Pixel(0, -37)
+                    });
+                    //点击打开窗口
+                    AMap.event.addListener(marker,'click',function(){
+                        infoWin.open(map,marker.getPosition());
+                    });
+                    //点击关闭窗口
+                    AMap.event.addListener(marker,'click',function(){
+                        infoWin.close(map,marker.getPosition());
+                    });
+                }
+            });
+        });
+
+        //插入工具条、定位按钮
+        AMap.plugin('AMap.ToolBar',function(){
+            var toolbar = new AMap.ToolBar();
+            map.addControl(toolbar);
+        });
+    </script>
+    
+</body>
+</html>

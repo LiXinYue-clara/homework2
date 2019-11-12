@@ -1,0 +1,75 @@
+/*网页整体效果基本设置*/
+body{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    overflow: hidden;
+}
+
+/*背景：位置靠左*/
+.web_bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height:100%;
+    float: left;
+    z-index:-10;
+    zoom: 1;
+    background-color: #fff;
+    background-repeat: no-repeat;
+}
+
+/*header样式*/
+#header {
+    margin: 10px;
+    padding: 5px, 5px, 5px, 5px;
+    float: left;
+}
+
+/*地图容器*/
+#container{
+    height: 100%;
+    width: 79%;
+    float: right;
+}
+
+/*题目样式 class = header*/
+.header {
+    top: 0;
+    left: 0;
+    padding: 5px;
+    margin: 1px;
+    overflow: visible;
+    background-color: rgba(255, 255, 255, 0.336);
+}
+
+/*注释信息样式*/
+.table{
+    background-color: rgba(247, 242, 242, 0.589);
+    margin: 10px;
+    padding: 5px, 20px, 5px, 20px;
+    width: 18%;
+    height: 70%;
+    float: left;
+    overflow: auto;
+}
+
+/*天气窗口样式：class = content*/
+.content {
+    width: 18em;
+    background-color: rgba(250, 235, 215, 0.733);
+    padding: 2px;
+}
+.sharp{
+    height: 1rem;
+    width: 1rem;
+    background-color: rgba(250, 235, 215, 0.733);
+    transform: rotateZ(45deg);
+    box-shadow: 2px 2px 3px rgba(250, 235, 215, 0.733);;
+    position: inherit;
+    margin-left: 7.5rem;
+    margin-top: -8px;
+}
